@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 
 class UserBase(BaseModel):
@@ -60,7 +61,7 @@ class taskAnswer(BaseModel):
 
 class LeaderboardUser(BaseModel):
     username: str
-    score: list[int]
+    score: List[int]
 
     class Config:
         orm_mode = True

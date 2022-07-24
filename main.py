@@ -3,10 +3,14 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import timedelta
+from typing import List, Union
 
-from . import crud, models, schemas, security
-from .database import engine, get_db
-from .utils import stringToList
+import crud
+import models
+import schemas
+import security
+from database import engine, get_db
+from utils import stringToList
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -56,19 +60,19 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
-@app.get("/users", response_model=list[schemas.User])
+@app.get("/users", response_model=List[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, token_user: security.User = Depends(security.get_current_user), db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
-@app.get("/courses", response_model=list[schemas.Course])
+@app.get("/courses", response_model=List[schemas.Course])
 def read_courses(db: Session = Depends(get_db)):
     courses = crud.get_courses(db)
     return courses
 
 
-@app.get("/courses/", response_model=list[schemas.Task])
+@app.get("/courses/", response_model=List[schemas.Task])
 def read_course(path: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
     course = crud.get_course_by_path(db, path)
     if not course:
@@ -89,7 +93,7 @@ def read_course(path: str, db: Session = Depends(get_db), token_user: security.U
     return tasks
 
 
-@app.get("/userSolved", response_model=list[int])
+@app.get("/userSolved", response_model=List[int])
 def get_solved(db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
     user = crud.get_user_by_username(db, token_user.username)
 

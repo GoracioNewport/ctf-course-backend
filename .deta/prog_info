@@ -1,1 +1,0 @@
-{"id":"93ff9571-36ed-4781-9ab7-db98b35311b8","space":27177,"runtime":"python3.9","name":"backend","path":"i1vru4","project":"c0e74w80","account":"144798365827","region":"ap-southeast-1","deps":["fastapi==0.79.0","jose==1.0.0","passlib==1.7.4","pydantic==1.9.1","python_jose==3.3.0","SQLAlchemy==1.4.39","Werkzeug==2.2.0"],"envs":null,"public":true,"log_level":"off","cron":""}

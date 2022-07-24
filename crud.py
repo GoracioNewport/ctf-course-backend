@@ -1,5 +1,8 @@
 from sqlalchemy.orm import Session
-from . import models, schemas, security, utils
+import models
+import schemas
+import security
+import utils
 
 
 def get_user(db: Session, user_id: int):
@@ -30,7 +33,8 @@ def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = security.get_hash(user.password)
     solved_string = "[" + ("0," * 99) + "0]"
     score_string = "[" + ("0," * 9) + "0]"
-    db_user = models.User(username=user.username, hashed_password=hashed_password, score=score_string, solved=solved_string)
+    db_user = models.User(username=user.username, hashed_password=hashed_password,
+                          score=score_string, solved=solved_string)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
