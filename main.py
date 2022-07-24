@@ -17,7 +17,8 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",
+    "http://localhost:8080",
+    "http://82.200.48.68:8080"
 ]
 
 app.add_middleware(
@@ -183,3 +184,69 @@ def get_leaderboard(db: Session = Depends(get_db)):
     }
 
     return response
+
+# -- ADMIN SECTION ---
+
+
+@app.post("/unlockCourse")
+def unlock_course(course_id: int, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
+    if not security.check_admin(token_user.username):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied"
+        )
+
+    crud.unlock_course(db, course_id)
+
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Access Granted"
+    )
+
+
+@app.post("/createCourse")
+def create_course(course_name: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
+    if not security.check_admin(token_user.username):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied"
+        )
+
+    crud.create_course(db, course_name)
+
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Access Granted"
+    )
+
+
+@app.post("/createTask")
+def create_task(task_name: str, task_description: str, course_id: int, weight: int, answer: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
+    if not security.check_admin(token_user.username):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied"
+        )
+
+    crud.create_task(db, task_name, task_description, course_id, weight, answer)
+
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Access Granted"
+    )
+
+
+@app.delete("/deleteUser")
+def delete_user(username: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
+    if not security.check_admin(token_user.username):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied"
+        )
+
+    crud.delete_user(db, username)
+
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Access Granted"
+    )

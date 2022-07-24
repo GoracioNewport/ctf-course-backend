@@ -76,3 +76,40 @@ def add_task_solution(db: Session, task_id: int):
 
     task.solved += 1
     db.commit()
+
+
+# --- ADMIN SECTION ---
+
+def create_course(db: Session, course_name: str):
+    db_course = models.Course(
+        name=course_name, description="", path=course_name.lower(), unlocked=0)
+
+    db.add(db_course)
+    db.commit()
+    db.refresh(db_course)
+    return db_course
+
+
+def create_task(db: Session, task_name: str, task_desc: str, course_id: int, weight: int, answer: str):
+    hashed_answer = security.get_hash(answer)
+
+    task_db = models.Task(name=task_name, description=task_desc, course_id=course_id,
+                          weight=weight, solved=0, hashed_answer=hashed_answer)
+
+    db.add(task_db)
+    db.commit()
+    db.refresh(task_db)
+    return task_db
+
+
+def unlock_course(db: Session, course_id: int):
+    course = get_course(db, course_id)
+
+    course.unlocked = 1
+    db.commit()
+
+
+def delete_user(db: Session, username: str):
+    db.query(models.User).filter(models.User.username == username).delete()
+
+    db.commit()

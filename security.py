@@ -41,6 +41,10 @@ def verify_hash(text, hash):
     return pwd_context.verify(text, hash)
 
 
+def check_admin(username):
+    return username in admin_usernames
+
+
 def get_hash(text):
     return pwd_context.hash(text)
 
