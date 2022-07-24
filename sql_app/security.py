@@ -13,6 +13,8 @@ SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+admin_usernames = ["GoracioNewport"]
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -34,19 +36,19 @@ class UserInDB(User):
     hashed_password: str
 
 
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+def verify_hash(text, hash):
+    return pwd_context.verify(text, hash)
 
 
-def get_password_hash(password):
-    return pwd_context.hash(password)
+def get_hash(text):
+    return pwd_context.hash(text)
 
 
 def authenticate_user(db, username: str, password: str):
     user = crud.get_user_by_username(db, username)
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
+    if not verify_hash(password, user.hashed_password):
         return False
     return user
 

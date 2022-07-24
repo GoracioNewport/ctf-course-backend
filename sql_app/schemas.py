@@ -11,7 +11,6 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-    score: int
 
     class Config:
         orm_mode = True
@@ -49,6 +48,19 @@ class Course(CourseBase):
     id: int
     path: str
     unlocked: bool
+
+    class Config:
+        orm_mode = True
+
+
+class taskAnswer(BaseModel):
+    answer: str
+    taskId: int
+
+
+class LeaderboardUser(BaseModel):
+    username: str
+    score: list[int]
 
     class Config:
         orm_mode = True

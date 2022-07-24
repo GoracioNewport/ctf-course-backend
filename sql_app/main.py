@@ -4,10 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
-import time
-
 from . import crud, models, schemas, security
 from .database import engine, get_db
+from .utils import stringToList
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -90,8 +89,93 @@ def read_course(path: str, db: Session = Depends(get_db), token_user: security.U
     return tasks
 
 
-@app.get("/userSolved")
+@app.get("/userSolved", response_model=list[int])
 def get_solved(db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
     user = crud.get_user_by_username(db, token_user.username)
 
-    return user.solved
+    return stringToList(user.solved)
+
+
+@app.post("/sendAnswer")
+def send_answer(taskAnswer: schemas.taskAnswer, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
+    answer = taskAnswer.answer
+    taskId = taskAnswer.taskId
+
+    user = crud.get_user_by_username(db, token_user.username)
+    solved = stringToList(user.solved)
+
+    task = crud.get_task_by_id(db, taskId)
+
+    if not task:
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Task not found"
+        )
+
+    course = crud.get_course(db, task.course_id)
+
+    if not course.unlocked:
+
+        raise HTTPException(
+            status_code=status.HTTP_418_IM_A_TEAPOT,
+            detail="nope"
+        )
+
+    if solved[taskId] == 2:
+
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Task already solved"
+        )
+
+    if not security.verify_hash(answer, task.hashed_answer):
+
+        crud.mark_task(db, user.id, task.id, 1)
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Wrong Answer"
+        )
+
+    crud.add_points_to_user(db, user.id, task.course_id, task.weight)
+    crud.mark_task(db, user.id, task.id, 2)
+    crud.add_task_solution(db, task.id)
+
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="OK"
+    )
+
+
+@app.get("/leaderboard")
+def get_leaderboard(db: Session = Depends(get_db)):
+    users = crud.get_users(db)
+    courses = crud.get_courses(db)
+
+    userList = list()
+
+    for user in users:
+        singleUser = {
+            'username': user.username,
+            'score': stringToList(user.score)
+        }
+
+        userList.append(singleUser)
+
+    courseList = list()
+
+    for course in courses:
+        singleCourse = {
+            'name': course.name,
+            'id': course.id
+        }
+
+        if course.unlocked:
+            courseList.append(singleCourse)
+
+    response = {
+        'courses': courseList,
+        'users': userList
+    }
+
+    return response
