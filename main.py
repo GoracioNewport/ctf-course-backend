@@ -189,104 +189,52 @@ def get_leaderboard(db: Session = Depends(get_db)):
     return response
 
 
-@app.get("/docs")
+@app.get("/getDocs")
 def get_docs(db: Session = Depends(get_db)):
-    pass
+    return crud.get_docs(db)
 
 # --- ADMIN SECTION ---
 
 
 @app.post("/unlockCourse")
-def unlock_course(course_id: int, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
-    if not security.check_admin(token_user.username):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access Denied"
-        )
-
+def unlock_course(course_id: int, db: Session = Depends(get_db), admin: bool = Depends(security.is_admin)):
     crud.unlock_course(db, course_id)
-
-    raise HTTPException(
-        status_code=status.HTTP_200_OK,
-        detail="Access Granted"
-    )
+    return admin
 
 
 @app.post("/createCourse")
-def create_course(course_name: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
-    if not security.check_admin(token_user.username):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access Denied"
-        )
-
+def create_course(course_name: str, db: Session = Depends(get_db), admin: bool = Depends(security.is_admin)):
     crud.create_course(db, course_name)
-
-    raise HTTPException(
-        status_code=status.HTTP_200_OK,
-        detail="Access Granted"
-    )
+    return admin
 
 
 @app.post("/createTask")
-def create_task(task_name: str, task_description: str, course_id: int, weight: int, answer: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
-    if not security.check_admin(token_user.username):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access Denied"
-        )
-
-    crud.create_task(db, task_name, task_description, course_id, weight, answer)
-
-    raise HTTPException(
-        status_code=status.HTTP_200_OK,
-        detail="Access Granted"
-    )
+def create_task(task_name: str, task_description: str, course_id: int, weight: int, answer: str, db: Session = Depends(get_db), admin: bool = Depends(security.is_admin)):
+    crud.create_task(db, task_name, task_description,
+                     course_id, weight, answer)
+    return admin
 
 
 @app.delete("/deleteUser")
-def delete_user(username: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
-    if not security.check_admin(token_user.username):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access Denied"
-        )
-
+def delete_user(username: str, db: Session = Depends(get_db), admin: bool = Depends(security.is_admin)):
     crud.delete_user(db, username)
-
-    raise HTTPException(
-        status_code=status.HTTP_200_OK,
-        detail="Access Granted"
-    )
+    return admin
 
 
 @app.delete("/deleteTask")
-def delete_task(task_id: int, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
-    if not security.check_admin(token_user.username):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access Denied"
-        )
-
+def delete_task(task_id: int, db: Session = Depends(get_db), admin: bool = Depends(security.is_admin)):
     crud.delete_task(db, task_id)
-
-    raise HTTPException(
-        status_code=status.HTTP_200_OK,
-        detail="Access Granted"
-    )
+    return admin
 
 
 @app.post("/updateTask")
-def update_task(task_id: int, answer: Union[str, None] = None, name: Union[str, None] = None, description: Union[str, None] = None, course_id: Union[int, None] = None, weight: Union[int, None] = None, solved: Union[int, None] = None, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
-    if not security.check_admin(token_user.username):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access Denied"
-        )
+def update_task(task_id: int, answer: Union[str, None] = None, name: Union[str, None] = None, description: Union[str, None] = None, course_id: Union[int, None] = None, weight: Union[int, None] = None, solved: Union[int, None] = None, db: Session = Depends(get_db), admin: bool = Depends(security.is_admin)):
+    crud.update_task(db, task_id, name, description,
+                     course_id, weight, answer, solved)
+    return admin
 
-    crud.update_task(db, task_id, name, description, course_id, weight, answer, solved)
 
-    raise HTTPException(
-        status_code=status.HTTP_200_OK,
-        detail="Access Granted"
-    )
+@app.post("/createDoc")
+def create_doc(name: str, description: str, db: Session = Depends(get_db), admin: bool = Depends(security.is_admin)):
+    doc = crud.create_doc(db, name, description)
+    return doc

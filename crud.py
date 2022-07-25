@@ -79,7 +79,11 @@ def add_task_solution(db: Session, task_id: int):
     db.commit()
 
 
+def get_docs(db: Session):
+    return db.query(models.Doc).all()
+
 # --- ADMIN SECTION ---
+
 
 def create_course(db: Session, course_name: str):
     db_course = models.Course(
@@ -144,3 +148,12 @@ def update_task(db: Session, task_id: int, name: Union[str, None], description: 
         task_db.hashed_answer = security.get_hash(answer)
 
     db.commit()
+
+
+def create_doc(db: Session, name: str, description: str):
+    doc_db = models.Doc(name=name, description=description, unlocked=1)
+
+    db.add(doc_db)
+    db.commit()
+    db.refresh(doc_db)
+    return doc_db

@@ -65,3 +65,9 @@ class LeaderboardUser(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class Doc(BaseModel):
+    id: int
+    name: str
+    description: str
