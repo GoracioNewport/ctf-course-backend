@@ -119,3 +119,10 @@ def delete_task(db: Session, task_id: int):
     db.query(models.Task).filter(models.Task.id == task_id).delete()
 
     db.commit()
+
+
+def update_answer(db: Session, task_id: int, answer: str):
+    task_db = db.query(models.Task).filter(models.Task.id == task_id).first()
+
+    task_db.hashed_answer = security.get_hash(answer)
+    db.commit() 

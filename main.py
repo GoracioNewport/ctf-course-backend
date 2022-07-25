@@ -261,7 +261,7 @@ def delete_user(username: str, db: Session = Depends(get_db), token_user: securi
 
 
 @app.delete("/deleteTask")
-def delete_task(task_id: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
+def delete_task(task_id: int, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
     if not security.check_admin(token_user.username):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -269,6 +269,22 @@ def delete_task(task_id: str, db: Session = Depends(get_db), token_user: securit
         )
 
     crud.delete_task(db, task_id)
+
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Access Granted"
+    )
+
+
+@app.post("/updateAnswer")
+def update_answer(task_id: int, answer: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
+    if not security.check_admin(token_user.username):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied"
+        )
+
+    crud.update_answer(db, task_id, answer)
 
     raise HTTPException(
         status_code=status.HTTP_200_OK,
