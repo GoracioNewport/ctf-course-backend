@@ -145,8 +145,9 @@ def send_answer(taskAnswer: schemas.taskAnswer, db: Session = Depends(get_db), t
         )
 
     crud.add_points_to_user(db, user.id, task.course_id, task.weight)
-    crud.mark_task(db, user.id, task.id, 2)
-    crud.add_task_solution(db, task.id)
+    if not security.check_admin(user.username):
+        crud.mark_task(db, user.id, task.id, 2)
+        crud.add_task_solution(db, task.id)
 
     raise HTTPException(
         status_code=status.HTTP_200_OK,
