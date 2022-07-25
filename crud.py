@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from typing import Union
 import models
 import schemas
 import security
@@ -121,8 +122,25 @@ def delete_task(db: Session, task_id: int):
     db.commit()
 
 
-def update_answer(db: Session, task_id: int, answer: str):
+def update_task(db: Session, task_id: int, name: Union[str, None], description: Union[str, None], course_id: Union[int, None], weight: Union[int, None], answer: Union[str, None], solved: Union[int, None]):
     task_db = db.query(models.Task).filter(models.Task.id == task_id).first()
 
-    task_db.hashed_answer = security.get_hash(answer)
+    if name:
+        task_db.name = name
+
+    if description:
+        task_db.description = description
+
+    if course_id:
+        task_db.course_id = course_id
+
+    if weight:
+        task_db.weight = weight
+
+    if solved:
+        task_db.solved = solved
+
+    if answer:
+        task_db.hashed_answer = security.get_hash(answer)
+
     db.commit()

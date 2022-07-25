@@ -276,15 +276,15 @@ def delete_task(task_id: int, db: Session = Depends(get_db), token_user: securit
     )
 
 
-@app.post("/updateAnswer")
-def update_answer(task_id: int, answer: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
+@app.post("/updateTask")
+def update_task(task_id: int, answer: Union[str, None] = None, name: Union[str, None] = None, description: Union[str, None] = None, course_id: Union[int, None] = None, weight: Union[int, None] = None, solved: Union[int, None] = None, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
     if not security.check_admin(token_user.username):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access Denied"
         )
 
-    crud.update_answer(db, task_id, answer)
+    crud.update_task(db, task_id, name, description, course_id, weight, answer, solved)
 
     raise HTTPException(
         status_code=status.HTTP_200_OK,
