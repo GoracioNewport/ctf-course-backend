@@ -113,3 +113,9 @@ def delete_user(db: Session, username: str):
     db.query(models.User).filter(models.User.username == username).delete()
 
     db.commit()
+
+
+def delete_task(db: Session, task_id: int):
+    db.query(models.Task).filter(models.Task.id == task_id).delete()
+
+    db.commit()

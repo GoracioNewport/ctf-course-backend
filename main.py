@@ -18,7 +18,9 @@ app = FastAPI()
 
 origins = [
     "http://localhost:8080",
-    "http://82.200.48.68:8080"
+    "http://82.200.48.68:8080",
+    "http://localhost:8080",
+    "http://localhost:3000"
 ]
 
 app.add_middleware(
@@ -185,7 +187,12 @@ def get_leaderboard(db: Session = Depends(get_db)):
 
     return response
 
-# -- ADMIN SECTION ---
+
+@app.get("/docs")
+def get_docs(db: Session = Depends(get_db)):
+    pass
+
+# --- ADMIN SECTION ---
 
 
 @app.post("/unlockCourse")
@@ -245,6 +252,22 @@ def delete_user(username: str, db: Session = Depends(get_db), token_user: securi
         )
 
     crud.delete_user(db, username)
+
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Access Granted"
+    )
+
+
+@app.delete("/deleteTask")
+def delete_task(task_id: str, db: Session = Depends(get_db), token_user: security.User = Depends(security.get_current_user)):
+    if not security.check_admin(token_user.username):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied"
+        )
+
+    crud.delete_task(db, task_id)
 
     raise HTTPException(
         status_code=status.HTTP_200_OK,
