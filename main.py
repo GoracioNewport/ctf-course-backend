@@ -193,6 +193,12 @@ def get_leaderboard(db: Session = Depends(get_db)):
 def get_docs(db: Session = Depends(get_db)):
     return crud.get_docs(db)
 
+
+@app.get("/flag")
+def get_flag():
+    return {'flag':'gctf_i_knew_it_all_along'}
+
+
 # --- ADMIN SECTION ---
 
 
@@ -238,3 +244,4 @@ def update_task(task_id: int, answer: Union[str, None] = None, name: Union[str, 
 def create_doc(name: str, description: str, db: Session = Depends(get_db), admin: bool = Depends(security.is_admin)):
     doc = crud.create_doc(db, name, description)
     return doc
+
