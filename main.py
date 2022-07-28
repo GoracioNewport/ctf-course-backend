@@ -12,9 +12,12 @@ import security
 from database import engine, get_db
 from utils import stringToList
 
+from ppc_tasks import router
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.include_router(router)
 
 origins = [
     "http://localhost:8080",
