@@ -2,6 +2,9 @@ from fastapi import APIRouter
 from typing import Union
 from secrets import token_hex
 
+import random
+import string
+
 router = APIRouter(prefix="/ppc")
 
 
@@ -71,7 +74,9 @@ def maze_make_turn(session_id: Union[str, None] = None, direction: Union[str, No
     y = maze_users[session_id][1]
 
     if maze[x + dx][y + dy] == '#':
-        return "Bump!"
+        maze_users[session_id][0] = 1
+        maze_users[session_id][1] = 1
+        return "Bump! Position restored :)"
 
     maze_users[session_id][0] += dx
     maze_users[session_id][1] += dy
@@ -80,12 +85,40 @@ def maze_make_turn(session_id: Union[str, None] = None, direction: Union[str, No
         return "I hope you programmed a bot for this... gctf_you_are_a_maze_ing"
     return "OK"
 
-# Bruteforce Task
+# Index Cycle Task
 
 
-@router.post("/passCheck")
-def pass_check(password: Union[str, None] = None):
-    if password != "bruh":
-        return "Wrong password!"
+pos = 0
+cycle_flag = "gctf_this_one_is_very_long_because_i_want_you_to_write_a_program_for_this"
 
-    return "gctf_fastest_hands_in_the_west"
+
+@router.get("/letter")
+def get_letter():
+    global pos
+    r = cycle_flag[pos]
+    pos += 1
+    if pos >= len(cycle_flag):
+        pos = 0
+
+    return r
+
+
+# Sort Task
+
+@router.get("/sort")
+def get_sort(s: Union[str, None] = None):
+    k = 2280
+    if not s:
+        r = ""
+        for i in range(k):
+            r += random.choice(string.ascii_lowercase)
+        return r
+
+    if len(s) != k:
+        return "Wrong string!"
+
+    for i in range(len(s) - 1):
+        if (s[i] > s[i + 1]):
+            return "String is not sorted!"
+
+    return "gctf_do_you_prefer_quicksort_or_mergesort?"
