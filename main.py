@@ -22,8 +22,9 @@ app.include_router(router)
 origins = [
     "http://localhost:8080",
     "http://82.200.48.68:8080",
-    "http://localhost:8080",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://frontend:5173"
 ]
 
 app.add_middleware(

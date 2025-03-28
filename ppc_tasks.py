@@ -85,8 +85,8 @@ def maze_make_turn(session_id: Union[str, None] = None, direction: Union[str, No
         return "I hope you programmed a bot for this... gctf_you_are_a_maze_ing"
     return "OK"
 
-# Index Cycle Task
 
+# Index Cycle Tas
 
 pos = 0
 cycle_flag = "gctf_this_one_is_very_long_because_i_want_you_to_write_a_program_for_this"
