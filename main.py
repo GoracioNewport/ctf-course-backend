@@ -20,11 +20,10 @@ app = FastAPI()
 app.include_router(router)
 
 origins = [
-    "http://localhost:8080",
-    "http://82.200.48.68:8080",
     "http://localhost:3000",
-    "http://localhost:5173",
-    "http://frontend:5173"
+    "http://localhost:8000",
+    "http://backctf.goracionewport.ru",
+    "http://shmitctf.goracionewport.ru",
 ]
 
 app.add_middleware(
