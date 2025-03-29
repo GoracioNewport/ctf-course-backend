@@ -82,14 +82,14 @@ def maze_make_turn(session_id: Union[str, None] = None, direction: Union[str, No
     maze_users[session_id][1] += dy
 
     if (x + dx == 19 and y + dy == 19):
-        return "I hope you programmed a bot for this... gctf_you_are_a_maze_ing"
+        return "I hope you programmed a bot for this... shmitctf_you_are_a_maze_ing"
     return "OK"
 
 
 # Index Cycle Tas
 
 pos = 0
-cycle_flag = "gctf_this_one_is_very_long_because_i_want_you_to_write_a_program_for_this"
+cycle_flag = "shmitctf_this_one_is_very_long_because_i_want_you_to_write_a_program_for_this"
 
 
 @router.get("/letter")
@@ -121,4 +121,4 @@ def get_sort(s: Union[str, None] = None):
         if (s[i] > s[i + 1]):
             return "String is not sorted!"
 
-    return "gctf_do_you_prefer_quicksort_or_mergesort?"
+    return "shmitctf_do_you_prefer_quicksort_or_mergesort?"

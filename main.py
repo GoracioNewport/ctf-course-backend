@@ -201,7 +201,7 @@ def get_docs(db: Session = Depends(get_db)):
 
 @app.get("/flag")
 def get_flag():
-    return {'flag':'gctf_i_knew_it_all_along'}
+    return {'flag':'shmitctf_i_knew_it_all_along'}
 
 
 # --- ADMIN SECTION ---
